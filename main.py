@@ -271,7 +271,6 @@ ZIKIR_LISTESI = KISA_ZIKIRLER + UZUN_ZIKIRLER
 
 # --- ZİKİRLERİN ANLAMLARI ---
 ZIKIR_ANLAMLARI = {
-    # Kısa Zikirler
     "Allah": "Her türlü noksanlıktan uzak, bütün kemal sıfatların sahibi olan tek gerçek İlah'ın özel adıdır.",
     "Sübhanallah": "Allah'ı her türlü eksiklikten, acizlikten ve yakışıksız sıfatlardan tenzih ederim; O yücedir.",
     "Elhamdülillah": "Her türlü hamd, övgü ve şükür yalnızca Allah'a mahsustur.",
@@ -284,7 +283,6 @@ ZIKIR_ANLAMLARI = {
     "Ya Hayy Ya Kayyum": "Ey ebedi ve gerçek Diri olan, varlıkları ayakta tutan ve idare eden Rabbim!",
     "Ya Rahim": "Ey müminlere ve yaratılmışlara sonsuz merhamet ve ikramda bulunan Rabbim!",
     "Ya Gaffar": "Ey kullarının günahlarını tekrar tekrar örten ve çokça bağışlayan Rabbim!",
-    # Uzun Zikirler
     "Sübhanallahi ve bihamdihi": "Allah'ı O'na hamd ederek her türlü eksiklikten tenzih ederim.",
     "Sübhanallahil azim": "Azamet ve yücelik sahibi olan Allah'ı her türlü eksiklikten tenzih ederim.",
     "Sübhanallahi ve bihamdihi, Sübhanallahil azim": "Allah'ı O'na hamd ederek tenzih ederim; yüce ve azametli olan Allah'ı da her türlü eksiklikten tenzih ederim.",
@@ -357,8 +355,9 @@ def metni_ingilizceye_cevir(metin):
 
 # --- 1. VERİTABANI BAĞLANTISI VE KURULUMU ---
 def init_db():
-    conn = sqlite3.connect("global_zikir.db", check_same_thread=False)
+    conn = sqlite3.connect("global_zikir.db", timeout=15, check_same_thread=False)
     c = conn.cursor()
+    c.execute("PRAGMA journal_mode=WAL;")
 
     c.execute("""
         CREATE TABLE IF NOT EXISTS zikir_portal (
@@ -434,14 +433,19 @@ c = conn.cursor()
 
 
 def veri_cek():
-    c.execute(
+    cur = conn.cursor()
+    cur.execute(
         "SELECT secilen_zikir, toplam_zikir, hedef_adet FROM zikir_portal WHERE id = 1"
     )
-    return c.fetchone()
+    row = cur.fetchone()
+    if row:
+        return row[0], int(row[1] or 0), int(row[2] or 5000)
+    return ZIKIR_LISTESI[0], 0, 5000
 
 
 def veri_guncelle(secilen_zikir, toplam_zikir, hedef_adet):
-    c.execute(
+    cur = conn.cursor()
+    cur.execute(
         """
         UPDATE zikir_portal
         SET secilen_zikir = ?, toplam_zikir = ?, hedef_adet = ?
@@ -456,7 +460,8 @@ def katilim_ekle(kullanici_adi, adet, zikir_adi):
     simdi = datetime.now()
     zaman = simdi.strftime("%H:%M:%S")
     gun = simdi.strftime("%Y-%m-%d")
-    c.execute(
+    cur = conn.cursor()
+    cur.execute(
         """
         INSERT INTO katilimlar (kullanici_adi, sehir, adet, tarih, zikir_adi, gun)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -466,9 +471,32 @@ def katilim_ekle(kullanici_adi, adet, zikir_adi):
     conn.commit()
 
 
+def ortak_havuzu_atomik_artir(kullanici_adi, zikir_adi):
+    simdi = datetime.now()
+    zaman = simdi.strftime("%H:%M:%S")
+    gun = simdi.strftime("%Y-%m-%d")
+    cur = conn.cursor()
+    cur.execute(
+        """
+        UPDATE zikir_portal
+        SET toplam_zikir = COALESCE(toplam_zikir, 0) + 1
+        WHERE id = 1
+        """
+    )
+    cur.execute(
+        """
+        INSERT INTO katilimlar (kullanici_adi, sehir, adet, tarih, zikir_adi, gun)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (kullanici_adi or "Misafir", "", 1, zaman, zikir_adi, gun),
+    )
+    conn.commit()
+
+
 def kullanici_toplam_etki_cek(kullanici_adi):
     temiz_ad = (kullanici_adi or "").strip() or "Misafir"
-    c.execute(
+    cur = conn.cursor()
+    cur.execute(
         """
         SELECT COALESCE(SUM(adet), 0)
         FROM katilimlar
@@ -476,12 +504,13 @@ def kullanici_toplam_etki_cek(kullanici_adi):
         """,
         (temiz_ad,),
     )
-    row = c.fetchone()
+    row = cur.fetchone()
     return int(row[0]) if row and row[0] is not None else 0
 
 
 def gunluk_zikir_ozeti(gun_str, varsayilan_zikir):
-    c.execute(
+    cur = conn.cursor()
+    cur.execute(
         """
         SELECT COALESCE(NULLIF(zikir_adi, ''), ?), COALESCE(SUM(adet), 0) AS adet
         FROM katilimlar
@@ -491,14 +520,15 @@ def gunluk_zikir_ozeti(gun_str, varsayilan_zikir):
         """,
         (varsayilan_zikir, gun_str, gun_str, varsayilan_zikir),
     )
-    return c.fetchall()
+    return cur.fetchall()
 
 
 def yazar_notu_cek():
-    c.execute(
+    cur = conn.cursor()
+    cur.execute(
         "SELECT baslik, icerik, guncellenme FROM misafir_yazar_notu WHERE id = 1"
     )
-    row = c.fetchone()
+    row = cur.fetchone()
     return row if row else ("", "", "")
 
 
@@ -506,7 +536,8 @@ def yazar_notu_kaydet(baslik, icerik, gecmise_ekle=True):
     zaman = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     temiz_baslik = baslik.strip()
     temiz_icerik = icerik.strip()
-    c.execute(
+    cur = conn.cursor()
+    cur.execute(
         """
         UPDATE misafir_yazar_notu
         SET baslik = ?, icerik = ?, guncellenme = ?
@@ -515,7 +546,7 @@ def yazar_notu_kaydet(baslik, icerik, gecmise_ekle=True):
         (temiz_baslik, temiz_icerik, zaman),
     )
     if gecmise_ekle and temiz_icerik:
-        c.execute(
+        cur.execute(
             """
             INSERT INTO misafir_yazar_gecmisi (baslik, icerik, tarih)
             VALUES (?, ?, ?)
@@ -526,7 +557,8 @@ def yazar_notu_kaydet(baslik, icerik, gecmise_ekle=True):
 
 
 def yazar_gecmisi_cek(limit=20):
-    c.execute(
+    cur = conn.cursor()
+    cur.execute(
         """
         SELECT id, baslik, icerik, tarih
         FROM misafir_yazar_gecmisi
@@ -535,19 +567,16 @@ def yazar_gecmisi_cek(limit=20):
         """,
         (limit,),
     )
-    return c.fetchall()
+    return cur.fetchall()
 
 
 def yazar_gecmisi_temizle():
-    c.execute("DELETE FROM misafir_yazar_gecmisi")
+    cur = conn.cursor()
+    cur.execute("DELETE FROM misafir_yazar_gecmisi")
     conn.commit()
 
 
-# Güncel veriyi veritabanından al
-aktif_zikir, toplam_zikir, hedef_adet = veri_cek()
-yazar_baslik, yazar_icerik, yazar_guncellenme = yazar_notu_cek()
-yazar_gecmisi = yazar_gecmisi_cek()
-
+# Session State Başlatma
 if "dil" not in st.session_state:
     st.session_state.dil = "tr"
 if "kullanici_sayac" not in st.session_state:
@@ -720,6 +749,8 @@ if not misafir_yazar_aktif and st.session_state.yazar_yetkisi:
 st.sidebar.divider()
 st.sidebar.header(t["admin_header"])
 
+aktif_zikir, toplam_zikir, hedef_adet = veri_cek()
+
 if not st.session_state.yonetici_yetkisi:
     girilen_sifre = st.sidebar.text_input(t["admin_pass_label"], type="password")
     if st.sidebar.button(t["login_btn"], use_container_width=True):
@@ -809,7 +840,8 @@ else:
         st.session_state.kullanici_sayac = 0
         st.session_state.baloncuk_goster = False
         veri_guncelle(aktif_zikir, 0, hedef_adet)
-        c.execute("DELETE FROM katilimlar")
+        cur = conn.cursor()
+        cur.execute("DELETE FROM katilimlar")
         conn.commit()
         st.sidebar.success(t["pool_reset_msg"])
         st.rerun()
@@ -838,114 +870,118 @@ st.title(t["main_title"])
 st.markdown(t["main_subtitle"])
 st.divider()
 
-aktif_zikir, toplam_zikir, hedef_adet = veri_cek()
-hedef_sayi = max(1, int(hedef_adet or 1))
-havuz_sayi = max(0, int(toplam_zikir or 0))
-kisisel_sayi = int(st.session_state.kullanici_sayac)
-kullanici_toplam_etki = kullanici_toplam_etki_cek(kullanici_adi)
-etki_yuzdesi = (kullanici_toplam_etki / hedef_sayi) * 100
-havuz_yuzdesi = min(100.0, (havuz_sayi / hedef_sayi) * 100)
 
-aktif_zikir_anlami = ZIKIR_ANLAMLARI.get(aktif_zikir, "")
-if dil == "en" and aktif_zikir_anlami:
-    aktif_zikir_anlami_goster = metni_ingilizceye_cevir(aktif_zikir_anlami)
-else:
-    aktif_zikir_anlami_goster = aktif_zikir_anlami
+@st.fragment(run_every=2)
+def canli_zikir_havuzu(aktif_dil, aktif_kullanici):
+    aktif_t = METINLER[aktif_dil]
+    guncel_zikir, guncel_toplam, guncel_hedef = veri_cek()
 
-st.markdown(t["active_dhikr_heading"])
-st.markdown(
-    f"""
-    <div class="quote-box" style="background-color:#fff8e7; border:3px solid #111111; border-radius:12px; padding:18px 20px; text-align:center; margin-top:8px; margin-bottom:16px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
-        <div style="color:#000000; font-size:28px; font-weight:900; text-transform:uppercase; letter-spacing:0.6px; line-height:1.35;">
-            {aktif_zikir}
-        </div>
-        <div style="color:#444444; font-size:15px; font-weight:500; margin-top:10px; padding-top:10px; border-top:1px dashed #d4b46a; line-height:1.5;">
-            <strong>{t["active_dhikr_meaning_label"]}</strong> {aktif_zikir_anlami_goster}
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+    hedef_sayi = max(1, int(guncel_hedef or 1))
+    havuz_sayi = max(0, int(guncel_toplam or 0))
+    kisisel_sayi = int(st.session_state.kullanici_sayac)
+    kullanici_toplam_etki = kullanici_toplam_etki_cek(aktif_kullanici)
+    etki_yuzdesi = (kullanici_toplam_etki / hedef_sayi) * 100
+    havuz_yuzdesi = min(100.0, (havuz_sayi / hedef_sayi) * 100)
 
-# 1. Satır: Yöneticinin Belirlediği Hedef & Ortak Havuzda Ulaşılan
-m1, m2 = st.columns(2)
-with m1:
-    st.metric(
-        label=f"🎯 {t['target_count_label']}",
-        value=f"{hedef_sayi:,} {t['unit_count']}".replace(",", "."),
-    )
-with m2:
-    st.metric(
-        label=f"🌐 {t['shared_pool_reached_label']}",
-        value=f"{havuz_sayi:,} {t['unit_count']}".replace(",", "."),
-        delta=f"%{havuz_yuzdesi:.1f}",
-    )
+    aktif_zikir_anlami = ZIKIR_ANLAMLARI.get(guncel_zikir, "")
+    if aktif_dil == "en" and aktif_zikir_anlami:
+        aktif_zikir_anlami_goster = metni_ingilizceye_cevir(aktif_zikir_anlami)
+    else:
+        aktif_zikir_anlami_goster = aktif_zikir_anlami
 
-# 2. Satır: Kullanıcının Kişisel Sayacı & Dışarıdan Hedefe Etkisi
-m3, m4 = st.columns(2)
-with m3:
-    st.metric(
-        label=f"👤 {t['your_contribution']} ({kullanici_adi})",
-        value=f"{kisisel_sayi:,} {t['unit_count']}".replace(",", "."),
-    )
-with m4:
-    st.metric(
-        label=f"📈 {t['your_goal_impact_label']}",
-        value=f"{kullanici_toplam_etki:,} {t['unit_count']}".replace(",", "."),
-        delta=f"+%{etki_yuzdesi:.2f}",
-    )
-
-st.progress(min(1.0, havuz_sayi / hedef_sayi))
-st.caption(
-    t["goal_progress_caption"]
-    .format(
-        pct=f"{havuz_yuzdesi:.1f}",
-        current=havuz_sayi,
-        target=hedef_sayi,
-    )
-    .replace(",", ".")
-)
-st.write("")
-
-# --- 4. ZİKİR ÇEKME BUTONU ---
-col_btn1, col_btn2 = st.columns([2, 1])
-with col_btn1:
-    if st.button(
-        t["pull_btn"], use_container_width=True, type="primary"
-    ):
-        st.session_state.kullanici_sayac += 1
-        yeni_toplam = havuz_sayi + 1
-
-        if hedef_sayi > 0 and havuz_sayi < hedef_sayi <= yeni_toplam:
-            st.session_state.baloncuk_goster = True
-
-        veri_guncelle(aktif_zikir, yeni_toplam, hedef_sayi)
-        katilim_ekle(kullanici_adi, 1, aktif_zikir)
-        st.rerun()
-
-with col_btn2:
-    if st.button(t["reset_personal_btn"], use_container_width=True):
-        st.session_state.kullanici_sayac = 0
-        st.toast(t["personal_reset_toast"])
-        st.rerun()
-
-# Hedefe Tam Ulaşıldığında Baloncuklar ve Kayar Yazı
-if st.session_state.baloncuk_goster:
-    st.balloons()
-    st.session_state.baloncuk_goster = False
-
-if havuz_sayi >= hedef_sayi:
-    st.success(t["goal_reached_msg"].format(hedef=hedef_sayi).replace(",", "."))
+    st.markdown(aktif_t["active_dhikr_heading"])
     st.markdown(
         f"""
-        <div style="background-color:#e8f4f8; padding:14px 16px; border-radius:8px; border-left: 6px solid #1f77b4; margin-top:15px; margin-bottom:15px;">
-            <marquee behavior="scroll" direction="left" scrollamount="5" onmouseover="this.stop();" onmouseout="this.start();" style="font-weight: 800; font-size: 20px; color: #1a252f; letter-spacing: 0.4px;">
-                {t["goal_marquee"]}
-            </marquee>
+        <div class="quote-box" style="background-color:#fff8e7; border:3px solid #111111; border-radius:12px; padding:18px 20px; text-align:center; margin-top:8px; margin-bottom:16px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+            <div style="color:#000000; font-size:28px; font-weight:900; text-transform:uppercase; letter-spacing:0.6px; line-height:1.35;">
+                {guncel_zikir}
+            </div>
+            <div style="color:#444444; font-size:15px; font-weight:500; margin-top:10px; padding-top:10px; border-top:1px dashed #d4b46a; line-height:1.5;">
+                <strong>{aktif_t["active_dhikr_meaning_label"]}</strong> {aktif_zikir_anlami_goster}
+            </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
+
+    m1, m2 = st.columns(2)
+    with m1:
+        st.metric(
+            label=f"🎯 {aktif_t['target_count_label']}",
+            value=f"{hedef_sayi:,} {aktif_t['unit_count']}".replace(",", "."),
+        )
+    with m2:
+        st.metric(
+            label=f"🌐 {aktif_t['shared_pool_reached_label']}",
+            value=f"{havuz_sayi:,} {aktif_t['unit_count']}".replace(",", "."),
+            delta=f"%{havuz_yuzdesi:.1f}",
+        )
+
+    m3, m4 = st.columns(2)
+    with m3:
+        st.metric(
+            label=f"👤 {aktif_t['your_contribution']} ({aktif_kullanici})",
+            value=f"{kisisel_sayi:,} {aktif_t['unit_count']}".replace(",", "."),
+        )
+    with m4:
+        st.metric(
+            label=f"📈 {aktif_t['your_goal_impact_label']}",
+            value=f"{kullanici_toplam_etki:,} {aktif_t['unit_count']}".replace(",", "."),
+            delta=f"+%{etki_yuzdesi:.2f}",
+        )
+
+    st.progress(min(1.0, havuz_sayi / hedef_sayi))
+    st.caption(
+        aktif_t["goal_progress_caption"]
+        .format(
+            pct=f"{havuz_yuzdesi:.1f}",
+            current=havuz_sayi,
+            target=hedef_sayi,
+        )
+        .replace(",", ".")
+    )
+    st.write("")
+
+    # --- 4. ZİKİR ÇEKME BUTONU ---
+    col_btn1, col_btn2 = st.columns([2, 1])
+    with col_btn1:
+        if st.button(
+            aktif_t["pull_btn"], use_container_width=True, type="primary"
+        ):
+            st.session_state.kullanici_sayac += 1
+            yeni_toplam = havuz_sayi + 1
+
+            if hedef_sayi > 0 and havuz_sayi < hedef_sayi <= yeni_toplam:
+                st.session_state.baloncuk_goster = True
+
+            ortak_havuzu_atomik_artir(aktif_kullanici, guncel_zikir)
+            st.rerun(scope="fragment")
+
+    with col_btn2:
+        if st.button(aktif_t["reset_personal_btn"], use_container_width=True):
+            st.session_state.kullanici_sayac = 0
+            st.toast(aktif_t["personal_reset_toast"])
+            st.rerun(scope="fragment")
+
+    if st.session_state.baloncuk_goster:
+        st.balloons()
+        st.session_state.baloncuk_goster = False
+
+    if havuz_sayi >= hedef_sayi:
+        st.success(aktif_t["goal_reached_msg"].format(hedef=hedef_sayi).replace(",", "."))
+        st.markdown(
+            f"""
+            <div style="background-color:#e8f4f8; padding:14px 16px; border-radius:8px; border-left: 6px solid #1f77b4; margin-top:15px; margin-bottom:15px;">
+                <marquee behavior="scroll" direction="left" scrollamount="5" onmouseover="this.stop();" onmouseout="this.start();" style="font-weight: 800; font-size: 20px; color: #1a252f; letter-spacing: 0.4px;">
+                    {aktif_t["goal_marquee"]}
+                </marquee>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
+canli_zikir_havuzu(dil, kullanici_adi)
 
 st.divider()
 

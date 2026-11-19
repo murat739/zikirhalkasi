@@ -1,5 +1,45 @@
-﻿.streamlit/
+﻿# --- PYTHON GEÇİCİ DOSYALARI ---
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# --- SANAL ORTAMLAR (Virtual Environments) ---
+venv/
+env/
 .venv/
-baslat.bat
+
+# --- PYTHON BİLDİRİMLERİ VE PAKETLERİ ---
+*.egg-info/
+build/
+dist/
+
+# --- İŞLETİM SİSTEMİ VE EDİTÖR KALINTILARI ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- STREAMLIT VE GİZLİ AYARLAR ---
+.streamlit/secrets.toml
+
+# --- GEÇİCİ ÇIKTI, RAPOR VE LOG DOSYALARI ---
+outputs/*
+logs/*
+temp/
+*.xlsx
+*.csv
+
+# --- VERİTABANI VE SAYAÇ DOSYALARI ---
+*.db
+*.sqlite
+*.sqlite3
+ziyaretci_sayaci.txt
+
+# --- PYINSTALLER DERLEME ÇIKTILARI ---
+build/
+dist/
+*.spec
+*.db-wal
+*.db-shm
