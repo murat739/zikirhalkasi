@@ -17,12 +17,12 @@ st.set_page_config(
 try:
     YONETICI_SIFRESI = st.secrets["YONETICI_SIFRESI"]
 except Exception:
-    YONETICI_SIFRESI = "/zemrog3791./"
+    YONETICI_SIFRESI = "tarum3791."
 
 try:
     MISAFIR_YAZAR_SIFRESI = st.secrets["MISAFIR_YAZAR_SIFRESI"]
 except Exception:
-    MISAFIR_YAZAR_SIFRESI = "/zemrog3791./"
+    MISAFIR_YAZAR_SIFRESI = "tarum3791."
 
 # --- DİL SÖZLÜĞÜ (TÜRKÇE / İNGİLİZCE) ---
 METINLER = {
