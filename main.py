@@ -128,6 +128,7 @@ METINLER = {
         "city_stats_heading": "📜 Şehir, Merkez ve Ülke Bazlı Zikir Sayıları",
         "city_item": "✨ **{sehir} ({adet} adet)**",
         "no_city_data": "Henüz zikir kaydı bulunmuyor.",
+        "copy_blocked_toast": "Bu sitedeki içeriklerin kopyalanması ve paylaşılması engellenmiştir.",
         "footer_html": (
             "<div style='text-align: center; color: gray; font-size: 0.85em; line-height: 1.6;'>"
             "<b>🔒 Hukuki Koruma ve Kullanım Şartları:</b> Bu yazılım ve altyapı münhasıran manevi gelişim, dua ve ibadet amaçlı tasarlanmıştır. "
@@ -236,6 +237,7 @@ METINLER = {
         "city_stats_heading": "📜 Dhikr Counts by City, Center & Country",
         "city_item": "✨ **{sehir} ({adet} count)**",
         "no_city_data": "No dhikr records yet.",
+        "copy_blocked_toast": "Copying and sharing content from this site is disabled.",
         "footer_html": (
             "<div style='text-align: center; color: gray; font-size: 0.85em; line-height: 1.6;'>"
             "<b>🔒 Legal Protection & Terms of Use:</b> This software and infrastructure are designed exclusively for spiritual growth, supplication, and worship. "
@@ -869,6 +871,137 @@ if "yazar_yetkisi" not in st.session_state:
     st.session_state.yazar_yetkisi = False
 if "baloncuk_goster" not in st.session_state:
     st.session_state.baloncuk_goster = False
+
+t = METINLER[st.session_state.dil]
+dil = st.session_state.dil
+
+# --- KOPYALAMA VE PAYLAŞIM ENGELLEYİCİ (CSS + JS) ---
+st.markdown(
+    """
+    <style>
+        html, body, .stApp, .main, .block-container,
+        [data-testid="stAppViewContainer"], [data-testid="stSidebar"],
+        div, p, span, h1, h2, h3, h4, h5, h6, label, marquee, .quote-box {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+            -webkit-touch-callout: none !important;
+            -webkit-user-drag: none !important;
+        }
+        input, textarea, [contenteditable="true"] {
+            -webkit-user-select: text !important;
+            -moz-user-select: text !important;
+            -ms-user-select: text !important;
+            user-select: text !important;
+            -webkit-touch-callout: default !important;
+        }
+        @media print {
+            body * {
+                display: none !important;
+            }
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.components.v1.html(
+    f"""
+    <script>
+    (function() {{
+        const uyariMesaji = {json.dumps(t["copy_blocked_toast"])};
+        let sonUyari = 0;
+
+        function uyariGoster() {{
+            const simdi = Date.now();
+            if (simdi - sonUyari > 2500) {{
+                sonUyari = simdi;
+                try {{
+                    const toast = document.createElement("div");
+                    toast.textContent = uyariMesaji;
+                    toast.style.position = "fixed";
+                    toast.style.bottom = "20px";
+                    toast.style.right = "20px";
+                    toast.style.background = "#111827";
+                    toast.style.color = "#ffffff";
+                    toast.style.padding = "10px 16px";
+                    toast.style.borderRadius = "8px";
+                    toast.style.fontSize = "13px";
+                    toast.style.fontWeight = "600";
+                    toast.style.zIndex = "999999";
+                    toast.style.boxShadow = "0 4px 12px rgba(0,0,0,0.25)";
+                    const hedefDoc = window.parent && window.parent.document ? window.parent.document : document;
+                    hedefDoc.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 2200);
+                }} catch (e) {{}}
+            }}
+        }}
+
+        function korumaUygula(doc) {{
+            if (!doc || doc.__zikirKorumaAktif) return;
+            doc.__zikirKorumaAktif = true;
+
+            if (navigator && navigator.share) {{
+                try {{
+                    navigator.share = async function() {{
+                        uyariGoster();
+                        throw new Error("Sharing disabled");
+                    }};
+                }} catch (e) {{}}
+            }}
+
+            doc.addEventListener("contextmenu", function(e) {{
+                e.preventDefault();
+                uyariGoster();
+            }}, true);
+
+            ["copy", "cut", "paste", "dragstart", "selectstart"].forEach(function(olay) {{
+                doc.addEventListener(olay, function(e) {{
+                    const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
+                    const girisAlani = tag === "input" || tag === "textarea" || (e.target && e.target.isContentEditable);
+                    if (!girisAlani || olay !== "paste") {{
+                        e.preventDefault();
+                        if (olay === "copy" || olay === "cut") {{
+                            try {{
+                                if (e.clipboardData) {{
+                                    e.clipboardData.setData("text/plain", "");
+                                }}
+                            }} catch (err) {{}}
+                            uyariGoster();
+                        }}
+                    }}
+                }}, true);
+            }});
+
+            doc.addEventListener("keydown", function(e) {{
+                const key = (e.key || "").toLowerCase();
+                if ((e.ctrlKey || e.metaKey) && ["c", "x", "a", "s", "u", "p"].includes(key)) {{
+                    const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
+                    const girisAlani = tag === "input" || tag === "textarea" || (e.target && e.target.isContentEditable);
+                    if (!(girisAlani && (key === "a" || key === "c" || key === "x"))) {{
+                        e.preventDefault();
+                        uyariGoster();
+                    }}
+                }}
+                if (e.key === "F12" || ((e.ctrlKey || e.metaKey) && e.shiftKey && ["i", "j", "c"].includes(key))) {{
+                    e.preventDefault();
+                    uyariGoster();
+                }}
+            }}, true);
+        }}
+
+        korumaUygula(document);
+        try {{
+            if (window.parent && window.parent.document) {{
+                korumaUygula(window.parent.document);
+            }}
+        }} catch (e) {{}}
+    }})();
+    </script>
+    """,
+    height=0,
+)
 
 # --- 2. KENAR ÇUBUĞU: DİL, KULLANICI & YÖNETİCİ PANELİ ---
 dil_secimi = st.sidebar.selectbox(
