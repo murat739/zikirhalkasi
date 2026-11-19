@@ -17,12 +17,12 @@ st.set_page_config(
 try:
     YONETICI_SIFRESI = st.secrets["YONETICI_SIFRESI"]
 except Exception:
-    YONETICI_SIFRESI = "tarum1453."
+    YONETICI_SIFRESI = "zemrog3791."
 
 try:
     MISAFIR_YAZAR_SIFRESI = st.secrets["MISAFIR_YAZAR_SIFRESI"]
 except Exception:
-    MISAFIR_YAZAR_SIFRESI = "tarum1453."
+    MISAFIR_YAZAR_SIFRESI = "zemrog3791."
 
 # --- DİL SÖZLÜĞÜ (TÜRKÇE / İNGİLİZCE) ---
 METINLER = {
@@ -46,6 +46,9 @@ METINLER = {
         "wrong_pass": "Hatalı yönetici şifresi!",
         "admin_active": "Yönetici yetkisi aktif.",
         "select_dhikr_admin": "Ortak Çekilecek Zikri Belirle:",
+        "admin_dhikr_catalog_title": "📚 Zikir Çeşitleri ve Anlamları (Sadece Yönetici)",
+        "short_dhikr_group": "🔹 Kısa Zikirler",
+        "long_dhikr_group": "🔸 Uzun Zikirler",
         "target_label": "Ortak Hedef Sayısı:",
         "reset_pool_btn": "🗑️ Ortak Havuzu Sıfırla",
         "pool_reset_msg": "Havuz sıfırlandı!",
@@ -69,6 +72,7 @@ METINLER = {
             "yanındaki tüm ülkelerden bağlanan müminlerin ortak niyetle buluştuğu manevi dijital halka."
         ),
         "active_dhikr_heading": "### 📌 ÇEKİLECEK ORTAK ZİKİR:",
+        "active_dhikr_meaning_label": "Anlamı:",
         "your_contribution": "Sizin Katkınız",
         "unit_count": "Adet",
         "global_pool": "Global Havuz Toplamı",
@@ -152,6 +156,9 @@ METINLER = {
         "wrong_pass": "Incorrect admin password!",
         "admin_active": "Admin access active.",
         "select_dhikr_admin": "Select Shared Dhikr:",
+        "admin_dhikr_catalog_title": "📚 Dhikr Types & Meanings (Admin Only)",
+        "short_dhikr_group": "🔹 Short Dhikr",
+        "long_dhikr_group": "🔸 Long Dhikr",
         "target_label": "Shared Target Count:",
         "reset_pool_btn": "🗑️ Reset Shared Pool",
         "pool_reset_msg": "Shared pool has been reset!",
@@ -175,6 +182,7 @@ METINLER = {
             "all 81 provinces of Türkiye, and countries around the world unite with a shared intention."
         ),
         "active_dhikr_heading": "### 📌 SHARED DHIKR TO RECITE:",
+        "active_dhikr_meaning_label": "Meaning:",
         "your_contribution": "Your Contribution",
         "unit_count": "Count",
         "global_pool": "Global Pool Total",
@@ -540,21 +548,79 @@ SEHIR_KOORDINATLARI = {
     },
 }
 
-# --- EN ÖNEMLİ ZİKİRLER LİSTESİ (DOĞRU YAZILIŞLARIYLA) ---
-ZIKIR_LISTESI = [
+# --- EN ÖNEMLİ ZİKİRLER LİSTESİ (ÇEŞİTLERİ VE DOĞRU YAZILIŞLARIYLA) ---
+KISA_ZIKIRLER = [
     "Allah",
-    "Allahümme salli ala seyyidina Muhammedin ve ala ali seyyidina Muhammed (Salavat-ı Şerife)",
+    "Sübhanallah",
+    "Elhamdülillah",
+    "Allahu Ekber",
     "La ilahe illallah",
+    "Estağfirullah",
+    "Maşallah",
+    "İnşallah",
+    "Bismillah",
+    "Ya Hayy Ya Kayyum",
+    "Ya Rahim",
+    "Ya Gaffar",
+]
+
+UZUN_ZIKIRLER = [
+    "Sübhanallahi ve bihamdihi",
+    "Sübhanallahil azim",
     "Sübhanallahi ve bihamdihi, Sübhanallahil azim",
+    "Sübhanallahi vel hamdülillahi ve la ilahe illallahu vallahu ekber",
     "Estağfirullah el-azim ve etübü ileyh",
     "La havle vela kuvvete illa billahil aliyyil azim",
     "Hasbiyallahu ve ni'mel vekil",
-    "Sübhanallahi vel hamdülillahi ve la ilahe illallahu vallahu ekber",
+    "Hasbiyallahu la ilahe illa hu, aleyhi tevekkeltu ve huve rabbul arşil azim",
     "La ilahe illa ente sübhaneke inni kuntu minez zalimin (Hz. Yunus Duası)",
-    "Seyyidü'l-İstiğfar (Allahümme ente rabbi la ilahe illa ente...)",
-    "Elhamdülillah",
-    "Allahu Ekber",
+    "Allahümme salli ala seyyidina Muhammedin ve ala ali seyyidina Muhammed (Salavat-ı Şerife)",
+    "Allahümme barik ala seyyidina Muhammedin ve ala ali seyyidina Muhammed",
+    "Salli ala seyyidina Muhammedin ve ala alihi ve sahbihi ve sellim",
+    "Rabbena atina fid-dünya haseneten ve fil-ahireti haseneten ve kına azaben-nar",
+    "Rabbi zidni ilmen ve fehmen ve elhıkni bis-salihin",
+    "Allahümme ente rabbi la ilahe illa ente, halakteni ve ene abduke... (Seyyidü'l-İstiğfar)",
+    "Allahümme inni es'elükel-afve vel-afiyete fid-dünya vel-ahireh",
+    "Rabbanağfirli ve li-valideyye ve lil-mü'minine yevme yekumul-hisab",
 ]
+
+ZIKIR_LISTESI = KISA_ZIKIRLER + UZUN_ZIKIRLER
+
+# --- ZİKİRLERİN ANLAMLARI ---
+ZIKIR_ANLAMLARI = {
+    # Kısa Zikirler
+    "Allah": "Her türlü noksanlıktan uzak, bütün kemal sıfatların sahibi olan tek gerçek İlah'ın özel adıdır.",
+    "Sübhanallah": "Allah'ı her türlü eksiklikten, acizlikten ve yakışıksız sıfatlardan tenzih ederim; O yücedir.",
+    "Elhamdülillah": "Her türlü hamd, övgü ve şükür yalnızca Allah'a mahsustur.",
+    "Allahu Ekber": "Allah her şeyden, her varlıktan ve her tasavvurdan en büyüktür.",
+    "La ilahe illallah": "Allah'tan başka ibadete ve kulluğa layık hiçbir ilah yoktur.",
+    "Estağfirullah": "Allah'tan bağışlanma ve mağfiret dilerim.",
+    "Maşallah": "Allah dilemiş, böyle yaratmıştır; güzellik ve bereket Allah'ın lütfundandır.",
+    "İnşallah": "Allah dilerse; her işin gerçekleşmesi Allah'ın dilemesine bağlıdır.",
+    "Bismillah": "Allah'ın adıyla (başlarım).",
+    "Ya Hayy Ya Kayyum": "Ey ebedi ve gerçek Diri olan, varlıkları ayakta tutan ve idare eden Rabbim!",
+    "Ya Rahim": "Ey müminlere ve yaratılmışlara sonsuz merhamet ve ikramda bulunan Rabbim!",
+    "Ya Gaffar": "Ey kullarının günahlarını tekrar tekrar örten ve çokça bağışlayan Rabbim!",
+
+    # Uzun Zikirler
+    "Sübhanallahi ve bihamdihi": "Allah'ı O'na hamd ederek her türlü eksiklikten tenzih ederim.",
+    "Sübhanallahil azim": "Azamet ve yücelik sahibi olan Allah'ı her türlü eksiklikten tenzih ederim.",
+    "Sübhanallahi ve bihamdihi, Sübhanallahil azim": "Allah'ı O'na hamd ederek tenzih ederim; yüce ve azametli olan Allah'ı da her türlü eksiklikten tenzih ederim.",
+    "Sübhanallahi vel hamdülillahi ve la ilahe illallahu vallahu ekber": "Allah her türlü eksiklikten münezzehtir, hamd Allah'adır, Allah'tan başka ilah yoktur ve Allah en büyüktür.",
+    "Estağfirullah el-azim ve etübü ileyh": "Azamet sahibi olan Yüce Allah'tan bağışlanma diler ve tövbe ederek O'na yönelirim.",
+    "La havle vela kuvvete illa billahil aliyyil azim": "Günahlardan kaçınmaya ve ibadete güç yetirmek, ancak yüce ve azametli olan Allah'ın yardımıyla mümkündür.",
+    "Hasbiyallahu ve ni'mel vekil": "Allah bana yeter; O ne güzel vekil ve koruyucudur.",
+    "Hasbiyallahu la ilahe illa hu, aleyhi tevekkeltu ve huve rabbul arşil azim": "Allah bana yeter; O'ndan başka ilah yoktur. Yalnız O'na tevekkül ettim ve O, büyük Arş'ın Rabbidir.",
+    "La ilahe illa ente sübhaneke inni kuntu minez zalimin (Hz. Yunus Duası)": "Senden başka hiçbir ilah yoktur; Seni her türlü eksiklikten tenzih ederim. Gerçekten ben nefsine zulmedenlerden oldum.",
+    "Allahümme salli ala seyyidina Muhammedin ve ala ali seyyidina Muhammed (Salavat-ı Şerife)": "Allah'ım! Efendimiz Muhammed'e ve efendimiz Muhammed'in ailesine rahmet ve bereket ihsan eyle.",
+    "Allahümme barik ala seyyidina Muhammedin ve ala ali seyyidina Muhammed": "Allah'ım! Efendimiz Muhammed'i ve ailesini mübarek kıl ve bereketlerini artır.",
+    "Salli ala seyyidina Muhammedin ve ala alihi ve sahbihi ve sellim": "Allah'ım! Efendimiz Muhammed'e, ailesine ve bütün ashabına rahmet eyle ve onlara selamlık/esenlik ver.",
+    "Rabbena atina fid-dünya haseneten ve fil-ahireti haseneten ve kına azaben-nar": "Rabbimiz! Bize dünyada da iyilik ve güzellik ver, ahirette de iyilik ve güzellik ver; bizi cehennem azabından koru.",
+    "Rabbi zidni ilmen ve fehmen ve elhıkni bis-salihin": "Rabbim! İlmimi ve anlayışımı artır ve beni salih kullar arasına kat.",
+    "Allahümme ente rabbi la ilahe illa ente, halakteni ve ene abduke... (Seyyidü'l-İstiğfar)": "Allah'ım! Sen benim Rabbimsin, Senden başka ilah yoktur. Beni Sen yarattın ve ben Senin kulunum; gücüm yettiğince Senin ahdine ve vaadine bağlıyım. Yaptıklarımın şerrinden Sana sığınırım, bana verdiğin nimetleri itiraf eder ve günahlarımı da ikrar ederim; beni bağışla, çünkü günahları ancak Sen bağışlarsın.",
+    "Allahümme inni es'elükel-afve vel-afiyete fid-dünya vel-ahireh": "Allah'ım! Senden dünyada ve ahirette af ve afiyet (esenlik, sağlık ve korunma) dilerim.",
+    "Rabbanağfirli ve li-valideyye ve lil-mü'minine yevme yekumul-hisab": "Rabbimiz! Hesap gününde beni, anne-babamı ve bütün müminleri bağışla.",
+}
 
 
 def sehir_etiketi(sehir_key, dil):
@@ -869,6 +935,34 @@ else:
         veri_guncelle(secim, toplam_zikir, hedef_adet)
         st.rerun()
 
+    # Zikir çeşitleri ve anlamları yalnızca yönetici yetkisi aktifken görünür
+    with st.sidebar.expander(t["admin_dhikr_catalog_title"], expanded=False):
+        st.markdown(f"**{t['short_dhikr_group']}**")
+        for zikir in KISA_ZIKIRLER:
+            anlam = ZIKIR_ANLAMLARI.get(zikir, "")
+            st.markdown(
+                f"""
+                <div class="quote-box" style="padding: 8px 10px; margin-bottom: 6px; border-left: 3px solid #b8860b; border-radius: 4px; background-color: #fcfcfd;">
+                    <strong>{zikir}</strong><br>
+                    <span style="font-size: 0.85rem; color: #555555;">{anlam}</span>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+        st.markdown(f"**{t['long_dhikr_group']}**")
+        for zikir in UZUN_ZIKIRLER:
+            anlam = ZIKIR_ANLAMLARI.get(zikir, "")
+            st.markdown(
+                f"""
+                <div class="quote-box" style="padding: 8px 10px; margin-bottom: 6px; border-left: 3px solid #1f77b4; border-radius: 4px; background-color: #fcfcfd;">
+                    <strong>{zikir}</strong><br>
+                    <span style="font-size: 0.85rem; color: #555555;">{anlam}</span>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
     yeni_hedef = st.sidebar.number_input(
         t["target_label"],
         min_value=100,
@@ -934,12 +1028,21 @@ st.title(t["main_title"])
 st.markdown(t["main_subtitle"])
 st.divider()
 
+aktif_zikir_anlami = ZIKIR_ANLAMLARI.get(aktif_zikir, "")
+if dil == "en" and aktif_zikir_anlami:
+    aktif_zikir_anlami_goster = metni_ingilizceye_cevir(aktif_zikir_anlami)
+else:
+    aktif_zikir_anlami_goster = aktif_zikir_anlami
+
 st.markdown(t["active_dhikr_heading"])
 st.markdown(
     f"""
-    <div style="background-color:#fff8e7; border:3px solid #111111; border-radius:12px; padding:18px 20px; text-align:center; margin-top:8px; margin-bottom:16px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+    <div class="quote-box" style="background-color:#fff8e7; border:3px solid #111111; border-radius:12px; padding:18px 20px; text-align:center; margin-top:8px; margin-bottom:16px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
         <div style="color:#000000; font-size:28px; font-weight:900; text-transform:uppercase; letter-spacing:0.6px; line-height:1.35;">
             {aktif_zikir}
+        </div>
+        <div style="color:#444444; font-size:15px; font-weight:500; margin-top:10px; padding-top:10px; border-top:1px dashed #d4b46a; line-height:1.5;">
+            <strong>{t["active_dhikr_meaning_label"]}</strong> {aktif_zikir_anlami_goster}
         </div>
     </div>
     """,
