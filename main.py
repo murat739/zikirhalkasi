@@ -17,12 +17,12 @@ st.set_page_config(
 try:
     YONETICI_SIFRESI = st.secrets["YONETICI_SIFRESI"]
 except Exception:
-    YONETICI_SIFRESI = "tarum3791."
+    YONETICI_SIFRESI = "fika6002."
 
 try:
     MISAFIR_YAZAR_SIFRESI = st.secrets["MISAFIR_YAZAR_SIFRESI"]
 except Exception:
-    MISAFIR_YAZAR_SIFRESI = "tarum3791."
+    MISAFIR_YAZAR_SIFRESI = "fika6002."
 
 # --- DİL SÖZLÜĞÜ (TÜRKÇE / İNGİLİZCE) ---
 METINLER = {
@@ -590,6 +590,7 @@ if "baloncuk_goster" not in st.session_state:
 
 t = METINLER[st.session_state.dil]
 dil = st.session_state.dil
+yazar_yetkili_mi = bool(st.session_state.get("yazar_yetkisi", False))
 
 # --- KOPYALAMA VE PAYLAŞIM ENGELLEYİCİ (CSS + JS) ---
 st.markdown(
@@ -605,7 +606,8 @@ st.markdown(
             -webkit-touch-callout: none !important;
             -webkit-user-drag: none !important;
         }
-        input, textarea, [contenteditable="true"] {
+        [data-yazar-kopya-yapistir="true"],
+        [data-yazar-kopya-yapistir="true"] * {
             -webkit-user-select: text !important;
             -moz-user-select: text !important;
             -ms-user-select: text !important;
@@ -627,6 +629,7 @@ st.components.v1.html(
     <script>
     (function() {{
         const uyariMesaji = {json.dumps(t["copy_blocked_toast"])};
+        const yazarYetkili = {json.dumps(yazar_yetkili_mi)};
         let sonUyari = 0;
 
         function uyariGoster() {{
@@ -654,8 +657,38 @@ st.components.v1.html(
             }}
         }}
 
+        function yazarAlanlariniGuncelle(doc) {{
+            if (!doc || !doc.body) return;
+            const kutular = doc.querySelectorAll(
+                "[data-testid='stForm'] input[type='text'], [data-testid='stForm'] textarea"
+            );
+            kutular.forEach((el) => {{
+                if (yazarYetkili) {{
+                    el.setAttribute("data-yazar-kopya-yapistir", "true");
+                }} else {{
+                    el.removeAttribute("data-yazar-kopya-yapistir");
+                }}
+            }});
+        }}
+
+        function yazarNotKutusuMu(target) {{
+            if (!target || !yazarYetkili) return false;
+            const el = target.nodeType === 1 ? target : target.parentElement;
+            if (!el) return false;
+            return Boolean(el.closest("[data-yazar-kopya-yapistir='true']"));
+        }}
+
         function korumaUygula(doc) {{
-            if (!doc || doc.__zikirKorumaAktif) return;
+            if (!doc) return;
+            yazarAlanlariniGuncelle(doc);
+
+            if (!doc.__zikirYazarObserver && doc.body) {{
+                doc.__zikirYazarObserver = true;
+                const observer = new MutationObserver(() => yazarAlanlariniGuncelle(doc));
+                observer.observe(doc.body, {{ childList: true, subtree: true }});
+            }}
+
+            if (doc.__zikirKorumaAktif) return;
             doc.__zikirKorumaAktif = true;
 
             if (navigator && navigator.share) {{
@@ -668,34 +701,35 @@ st.components.v1.html(
             }}
 
             doc.addEventListener("contextmenu", function(e) {{
+                if (yazarNotKutusuMu(e.target)) {{
+                    return true;
+                }}
                 e.preventDefault();
                 uyariGoster();
             }}, true);
 
             ["copy", "cut", "paste", "dragstart", "selectstart"].forEach(function(olay) {{
                 doc.addEventListener(olay, function(e) {{
-                    const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
-                    const girisAlani = tag === "input" || tag === "textarea" || (e.target && e.target.isContentEditable);
-                    if (!girisAlani || olay !== "paste") {{
-                        e.preventDefault();
-                        if (olay === "copy" || olay === "cut") {{
-                            try {{
-                                if (e.clipboardData) {{
-                                    e.clipboardData.setData("text/plain", "");
-                                }}
-                            }} catch (err) {{}}
-                            uyariGoster();
-                        }}
+                    if (yazarNotKutusuMu(e.target) && olay !== "dragstart") {{
+                        return true;
+                    }}
+                    e.preventDefault();
+                    if (olay === "copy" || olay === "cut") {{
+                        try {{
+                            if (e.clipboardData) {{
+                                e.clipboardData.setData("text/plain", "");
+                            }}
+                        }} catch (err) {{}}
+                        uyariGoster();
                     }}
                 }}, true);
             }});
 
             doc.addEventListener("keydown", function(e) {{
                 const key = (e.key || "").toLowerCase();
-                if ((e.ctrlKey || e.metaKey) && ["c", "x", "a", "s", "u", "p"].includes(key)) {{
-                    const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
-                    const girisAlani = tag === "input" || tag === "textarea" || (e.target && e.target.isContentEditable);
-                    if (!(girisAlani && (key === "a" || key === "c" || key === "x"))) {{
+                if ((e.ctrlKey || e.metaKey) && ["c", "x", "v", "a", "s", "u", "p"].includes(key)) {{
+                    const izinliKisayol = yazarNotKutusuMu(e.target) && ["c", "x", "v", "a"].includes(key);
+                    if (!izinliKisayol) {{
                         e.preventDefault();
                         uyariGoster();
                     }}
