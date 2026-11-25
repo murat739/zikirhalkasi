@@ -17,15 +17,11 @@ st.set_page_config(
 try:
     YONETICI_SIFRESI = st.secrets["YONETICI_SIFRESI"]
 except Exception:
-<<<<<<< HEAD
-    YONETICI_SIFRESI = "lebis9791."
-=======
-    YONETICI_SIFRESI = "lebis9791."
+    YONETICI_SIFRESI = "arsub4002."
 try:
     MISAFIR_YAZAR_SIFRESI = st.secrets["MISAFIR_YAZAR_SIFRESI"]
 except Exception:
-<<<<<<< HEAD
-    MISAFIR_YAZAR_SIFRESI = "lebis9791."
+    MISAFIR_YAZAR_SIFRESI = "arsub4002."
 
 # --- SORUMLULUK REDDİ VE BİLGİLENDİRME METNİ ---
 SORUMLULUK_REDDI_BASLIK = "⚠️ Çeviri, Yapay Zekâ ve Sorumluluk Reddi Bilgilendirmesi"
@@ -38,9 +34,7 @@ SORUMLULUK_REDDI_METNI = (
     "Yapay zekâ sistemleri eksik, güncel olmayan veya hatalı bilgi ve kaynak üretebileceğinden, tüm içerik ve atıfların "
     "kullanılmadan önce birincil kaynaklardan teyit edilmesi kullanıcının sorumluluğundadır. Yazılım \"olduğu gibi\" (AS-IS) sunulur; "
     "doğrulanmamış içeriklerin kullanımından doğabilecek zararlardan geliştirici ve dağıtıcı sorumlu tutulamaz."
-)
-
-# --- ARAYÜZ METİNLERİ ---
+)# --- ARAYÜZ METİNLERİ ---
 METINLER = {
     "top_marquee": (
         '📖 "BENİ ANIN Kİ, BEN DE SİZİ ANAYIM; BANA ŞÜKREDİN, SAKIN NANKÖRLÜK ETMEYİN." '
