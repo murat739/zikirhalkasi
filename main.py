@@ -21,7 +21,6 @@ except Exception:
     YONETICI_SIFRESI = "lebis9791."
 =======
     YONETICI_SIFRESI = "lebis9791."
-
 try:
     MISAFIR_YAZAR_SIFRESI = st.secrets["MISAFIR_YAZAR_SIFRESI"]
 except Exception:
