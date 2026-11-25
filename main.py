@@ -18,6 +18,7 @@ try:
     YONETICI_SIFRESI = st.secrets["YONETICI_SIFRESI"]
 except Exception:
     YONETICI_SIFRESI = "arsub4002."
+
 try:
     MISAFIR_YAZAR_SIFRESI = st.secrets["MISAFIR_YAZAR_SIFRESI"]
 except Exception:
@@ -34,108 +35,7 @@ SORUMLULUK_REDDI_METNI = (
     "Yapay zekâ sistemleri eksik, güncel olmayan veya hatalı bilgi ve kaynak üretebileceğinden, tüm içerik ve atıfların "
     "kullanılmadan önce birincil kaynaklardan teyit edilmesi kullanıcının sorumluluğundadır. Yazılım \"olduğu gibi\" (AS-IS) sunulur; "
     "doğrulanmamış içeriklerin kullanımından doğabilecek zararlardan geliştirici ve dağıtıcı sorumlu tutulamaz."
-)# --- ARAYÜZ METİNLERİ ---
-METINLER = {
-    "top_marquee": (
-        '📖 "BENİ ANIN Kİ, BEN DE SİZİ ANAYIM; BANA ŞÜKREDİN, SAKIN NANKÖRLÜK ETMEYİN." '
-        "<strong>[BAKARA SURESİ, 2/152]</strong>"
-        " &nbsp;&nbsp;&nbsp;✦&nbsp;&nbsp;&nbsp; "
-        "BİRLİKTE GÜÇLENEREK BÜYÜYELİM VE KAİNATA ZİKRİMİZ DAĞILSIN."
-    ),
-    "participant_header": "🌍 Katılımcı Bilgileri",
-    "name_label": "Adınız / Rumuzunuz:",
-    "default_name": "Misafir",
-    "guest_writer_mode": "✍️ Misafir Yazar Modu (Paylaş ve Güncelle)",
-    "guest_writer_hint": "Yüksek metin kapasiteli paylaşım, güncelleme ve tarihçe alanını açmak için bu seçeneği işaretleyin.",
-    "admin_header": "🔐 Yönetici / Kurucu Paneli",
-    "admin_pass_label": "Yönetici Şifresi:",
-    "login_btn": "Giriş Yap",
-    "wrong_pass": "Hatalı yönetici şifresi!",
-    "admin_active": "Yönetici yetkisi aktif.",
-    "select_dhikr_admin": "Ortak Çekilecek Zikri Belirle:",
-    "admin_dhikr_catalog_title": "📚 Zikir Çeşitleri ve Anlamları (Sadece Yönetici)",
-    "short_dhikr_group": "🔹 Kısa Zikirler",
-    "long_dhikr_group": "🔸 Uzun Zikirler",
-    "target_label": "Ortak Hedef Sayısı:",
-    "admin_pool_metric": "Ortak Havuz Toplamı (Yönetici)",
-    "reset_pool_btn": "🗑️ Ortak Havuzu Sıfırla",
-    "pool_reset_msg": "Havuz sıfırlandı!",
-    "logout_btn": "🚪 Yönetici Çıkışı",
-    "daily_report_title": "📊 Günlük Zikir Raporu (Sadece Yönetici)",
-    "daily_total_label": "Bugün Çekilen Toplam Zikir",
-    "col_dhikr": "Zikir",
-    "col_count": "Adet",
-    "no_daily_records": "Bugün henüz zikir çekilmemiş.",
-    "sleep_note": (
-        "💡 *Not:* Bu web uygulaması ücretsiz sunucularda barındırılmaktadır. "
-        "Uzun süre işlem yapılmadığında uygulama uyku moduna geçebilir "
-        "(ekranda 'Zzzz' simgesi çıkabilir).\n\n"
-        "💤 Eğer böyle bir ekranla karşılaşırsanız, ekranda beliren mavi renkli "
-        "*'Yes, get this app back up!'* butonuna tıklayın ve uygulamanın "
-        "yeniden uyanması için 15-30 saniye bekleyin."
-    ),
-    "main_title": "ZİKİR HALKASI",
-    "main_subtitle": (
-        "Gönüllerin ortak niyet ve zikirle bir araya geldiği manevi dijital halka."
-    ),
-    "active_dhikr_heading": "### 📌 ÇEKİLECEK ORTAK ZİKİR:",
-    "active_dhikr_meaning_label": "Anlamı:",
-    "target_count_label": "Belirlenen Hedef",
-    "shared_pool_reached_label": "Ortak Havuzda Ulaşılan",
-    "your_contribution": "Sizin Katkınız (Kişisel)",
-    "your_goal_impact_label": "Hedefe Etkisi (Toplam Katkı)",
-    "goal_progress_caption": "Ortak Hedef İlerlemesi: %{pct} ({current:,} / {target:,})",
-    "unit_count": "Adet",
-    "goal_reached_msg": "🎉 ELHAMDÜLİLLAH! BELİRLENEN {hedef:,} ADETLİK ORTAK HEDEF TAMAMLANDI!",
-    "pull_btn": "📿 BİR ZİKİR ÇEK (Tıkla)",
-    "reset_personal_btn": "🔄 Kişisel Sayacı Sıfırla",
-    "personal_reset_toast": "Kişisel sayacınız sıfırlandı. Ortak havuzdaki toplam ve hedefe katkınız korundu!",
-    "goal_marquee": (
-        '📜 KUR\'AN-I KERİM (AYET): "BENİ ANIN Kİ, BEN DE SİZİ ANAYIM." '
-        "(BAKARA SURESİ, 152) &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; 📜 "
-        'HADİS-İ ŞERİF: "ALLAH\'I ANAN İLE ANMAYAN KİMSENİN MİSALİ, DİRİ İLE '
-        'ÖLÜ GİBİDİR." (BUHARİ) &nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; ✨ '
-        'HZ. MEVLANA (K.S.): "ZİKİR, KALBİN CİLASI VE PASININ '
-        'SÖKÜCÜSÜDÜR; RUHUN GIDASIDIR." '
-        "&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp; 💡 MANEVİ ŞİAR: "
-        '"BİRLİKTEN GÜÇ DOĞAR; KALPLER ORTAK NİYET VE ZİKİRLE BİRLEŞİR."'
-    ),
-    "writer_section_heading": "✍️ MİSAFİR YAZAR KÖŞESİ (GÜZEL SÖZ & BİLGİ PAYLAŞIMI)",
-    "writer_section_desc": "Sadece Misafir Yazar tarafından oluşturulan, güncellenebilen ve tarihçesi saklanan yüksek metin kapasiteli paylaşım alanı:",
-    "writer_pass_label": "Misafir Yazar Şifresi:",
-    "writer_login_btn": "🔓 Yazar Girişi",
-    "writer_logout_btn": "🔒 Yazar Çıkışı",
-    "writer_wrong_pass": "Hatalı Misafir Yazar şifresi!",
-    "writer_auth_active": "Misafir Yazar yetkisi aktif. Paylaşım yapabilir, güncelleyebilir ve tarihçeyi yönetebilirsiniz.",
-    "writer_title_label": "Başlık / Konu:",
-    "writer_default_title": "Günün Güzel Sözü ve Manevi Not",
-    "writer_body_label": "Güzel Söz / Bilgi / Uzun Metin (En fazla 10.000 karakter):",
-    "writer_body_placeholder": "Buraya dilediğiniz uzunlukta güzel söz, hikmetli not veya bilgi yazabilir ve istediğiniz zaman güncelleyebilirsiniz...",
-    "writer_save_btn": "💾 Paylaşımı Kaydet / Güncelle",
-    "writer_clear_btn": "🧹 Aktif Paylaşımı Temizle",
-    "writer_saved_msg": "Paylaşım kaydedildi, güncellendi ve tarihçeye eklendi!",
-    "writer_cleared_msg": "Aktif paylaşım alanı temizlendi.",
-    "writer_empty_warning": "Lütfen kaydedilecek bir metin girin.",
-    "writer_locked_note": "Paylaşım ve güncelleme formunu açmak için yukarıda **Misafir Yazar Modu**'nu işaretleyip yazar şifresiyle giriş yapın.",
-    "writer_no_post": "Henüz Misafir Yazar tarafından paylaşılmış bir söz veya bilgi bulunmuyor.",
-    "writer_updated_at": "Son Güncelleme",
-    "writer_char_count": "Karakter",
-    "writer_history_heading": "🗂️ Eski Paylaşımlar Tarihçesi",
-    "writer_no_history": "Henüz geçmiş paylaşım kaydı bulunmuyor.",
-    "writer_restore_btn": "↩️ Aktif Yap",
-    "writer_restored_msg": "Seçilen geçmiş paylaşım aktif alana geri yüklendi!",
-    "writer_clear_history_btn": "🗑️ Tarihçeyi Temizle",
-    "writer_history_cleared_msg": "Geçmiş paylaşımlar temizlendi.",
-    "copy_blocked_toast": "Bu sitedeki içeriklerin kopyalanması ve paylaşılması engellenmiştir.",
-    "footer_html": (
-        "<div style='text-align: center; color: gray; font-size: 0.85em; line-height: 1.6;'>"
-        "<b>🔒 Hukuki Koruma ve Kullanım Şartları:</b> Bu yazılım ve altyapı münhasıran manevi gelişim, dua ve ibadet amaçlı tasarlanmıştır. "
-        "Başka hiçbir ticari, siyasi veya farklı amaç için kullanılamaz, kopyalanamaz ve çoğaltılamaz.<br>"
-        '<b>"Birlikten güç doğar."</b> • Zikir Halkası Altyapısı • Manevi Gelişim Projesi'
-        "</div>"
-    ),
-=======
-    MISAFIR_YAZAR_SIFRESI = "fika6002."
+)
 
 # --- DİL SÖZLÜĞÜ (TÜRKÇE / İNGİLİZCE) ---
 METINLER = {
@@ -241,7 +141,7 @@ METINLER = {
             "</div>"
         ),
     },
-    "en": {
+"en": {
         "top_marquee": (
             '📖 "SO REMEMBER ME; I WILL REMEMBER YOU. AND BE GRATEFUL TO ME, AND DO NOT DENY ME." '
             "<strong>[SURAH AL-BAQARAH, 2/152]</strong>"
@@ -342,7 +242,6 @@ METINLER = {
             "</div>"
         ),
     },
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
 }
 
 # --- EN ÖNEMLİ ZİKİRLER LİSTESİ (ÇEŞİTLERİ VE DOĞRU YAZILIŞLARIYLA) ---
@@ -415,8 +314,6 @@ ZIKIR_ANLAMLARI = {
     "Allahümme inni es'elükel-afve vel-afiyete fid-dünya vel-ahireh": "Allah'ım! Senden dünyada ve ahirette af ve afiyet (esenlik, sağlık ve korunma) dilerim.",
     "Rabbanağfirli ve li-valideyye ve lil-mü'minine yevme yekumul-hisab": "Rabbimiz! Hesap gününde beni, anne-babamı ve bütün müminleri bağışla.",
 }
-<<<<<<< HEAD
-=======
 
 
 def _tek_parcayi_ingilizceye_cevir(parca):
@@ -467,9 +364,6 @@ def metni_ingilizceye_cevir(metin):
 
     blok_bosalt()
     return "\n".join(cevrilen_satirlar)
-
-
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
 # --- 1. VERİTABANI BAĞLANTISI VE KURULUMU ---
 def init_db():
     conn = sqlite3.connect("global_zikir.db", timeout=15, check_same_thread=False)
@@ -691,14 +585,9 @@ def yazar_gecmisi_temizle():
     cur = conn.cursor()
     cur.execute("DELETE FROM misafir_yazar_gecmisi")
     conn.commit()
-
-
 # Session State Başlatma
-<<<<<<< HEAD
-=======
 if "dil" not in st.session_state:
     st.session_state.dil = "tr"
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
 if "kullanici_sayac" not in st.session_state:
     st.session_state.kullanici_sayac = 0
 if "yonetici_yetkisi" not in st.session_state:
@@ -708,12 +597,8 @@ if "yazar_yetkisi" not in st.session_state:
 if "baloncuk_goster" not in st.session_state:
     st.session_state.baloncuk_goster = False
 
-<<<<<<< HEAD
-t = METINLER
-=======
 t = METINLER[st.session_state.dil]
 dil = st.session_state.dil
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
 yazar_yetkili_mi = bool(st.session_state.get("yazar_yetkisi", False))
 
 # --- KOPYALAMA VE PAYLAŞIM ENGELLEYİCİ (CSS + JS) ---
@@ -781,27 +666,11 @@ st.components.v1.html(
             }}
         }}
 
-<<<<<<< HEAD
-        function yazarAlanlariniGuncelle(doc) {
-=======
         function yazarAlanlariniGuncelle(doc) {{
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
             if (!doc || !doc.body) return;
             const kutular = doc.querySelectorAll(
                 "[data-testid='stForm'] input[type='text'], [data-testid='stForm'] textarea"
             );
-<<<<<<< HEAD
-            kutular.forEach((el) => {
-                if (yazarYetkili) {
-                    el.setAttribute("data-yazar-kopya-yapistir", "true");
-                } else {
-                    el.removeAttribute("data-yazar-kopya-yapistir");
-                }
-            });
-        }
-
-        function yazarNotKutusuMu(target) {
-=======
             kutular.forEach((el) => {{
                 if (yazarYetkili) {{
                     el.setAttribute("data-yazar-kopya-yapistir", "true");
@@ -812,24 +681,10 @@ st.components.v1.html(
         }}
 
         function yazarNotKutusuMu(target) {{
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
             if (!target || !yazarYetkili) return false;
             const el = target.nodeType === 1 ? target : target.parentElement;
             if (!el) return false;
             return Boolean(el.closest("[data-yazar-kopya-yapistir='true']"));
-<<<<<<< HEAD
-        }
-
-        function korumaUygula(doc) {
-            if (!doc) return;
-            yazarAlanlariniGuncelle(doc);
-
-            if (!doc.__zikirYazarObserver && doc.body) {
-                doc.__zikirYazarObserver = true;
-                const observer = new MutationObserver(() => yazarAlanlariniGuncelle(doc));
-                observer.observe(doc.body, { childList: true, subtree: true });
-            }
-=======
         }}
 
         function korumaUygula(doc) {{
@@ -841,69 +696,10 @@ st.components.v1.html(
                 const observer = new MutationObserver(() => yazarAlanlariniGuncelle(doc));
                 observer.observe(doc.body, {{ childList: true, subtree: true }});
             }}
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
 
             if (doc.__zikirKorumaAktif) return;
             doc.__zikirKorumaAktif = true;
 
-<<<<<<< HEAD
-            if (navigator && navigator.share) {
-                try {
-                    navigator.share = async function() {
-                        uyariGoster();
-                        throw new Error("Sharing disabled");
-                    };
-                } catch (e) {}
-            }
-
-            doc.addEventListener("contextmenu", function(e) {
-                if (yazarNotKutusuMu(e.target)) {
-                    return true;
-                }
-                e.preventDefault();
-                uyariGoster();
-            }, true);
-
-            ["copy", "cut", "paste", "dragstart", "selectstart"].forEach(function(olay) {
-                doc.addEventListener(olay, function(e) {
-                    if (yazarNotKutusuMu(e.target) && olay !== "dragstart") {
-                        return true;
-                    }
-                    e.preventDefault();
-                    if (olay === "copy" || olay === "cut") {
-                        try {
-                            if (e.clipboardData) {
-                                e.clipboardData.setData("text/plain", "");
-                            }
-                        } catch (err) {}
-                        uyariGoster();
-                    }
-                }, true);
-            });
-
-            doc.addEventListener("keydown", function(e) {
-                const key = (e.key || "").toLowerCase();
-                if ((e.ctrlKey || e.metaKey) && ["c", "x", "v", "a", "s", "u", "p"].includes(key)) {
-                    const izinliKisayol = yazarNotKutusuMu(e.target) && ["c", "x", "v", "a"].includes(key);
-                    if (!izinliKisayol) {
-                        e.preventDefault();
-                        uyariGoster();
-                    }
-                }
-                if (e.key === "F12" || ((e.ctrlKey || e.metaKey) && e.shiftKey && ["i", "j", "c"].includes(key))) {
-                    e.preventDefault();
-                    uyariGoster();
-                }
-            }, true);
-        }
-
-        korumaUygula(document);
-        try {
-            if (window.parent && window.parent.document) {
-                korumaUygula(window.parent.document);
-            }
-        } catch (e) {}
-=======
             if (navigator && navigator.share) {{
                 try {{
                     navigator.share = async function() {{
@@ -960,15 +756,11 @@ st.components.v1.html(
                 korumaUygula(window.parent.document);
             }}
         }} catch (e) {{}}
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
     }})();
     </script>
     """,
     height=0,
 )
-<<<<<<< HEAD
-# --- 2. KENAR ÇUBUĞU: KULLANICI & YÖNETİCİ PANELİ ---
-=======
 
 # --- 2. KENAR ÇUBUĞU: DİL, KULLANICI & YÖNETİCİ PANELİ ---
 dil_secimi = st.sidebar.selectbox(
@@ -984,18 +776,13 @@ if dil_secimi != st.session_state.dil:
 t = METINLER[st.session_state.dil]
 dil = st.session_state.dil
 
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
 st.sidebar.header(t["participant_header"])
 kullanici_adi = st.sidebar.text_input(t["name_label"], value=t["default_name"])
 misafir_yazar_aktif = st.sidebar.checkbox(
     t["guest_writer_mode"],
     value=(
         st.session_state.yazar_yetkisi
-<<<<<<< HEAD
-        or (kullanici_adi.strip().lower() == "misafir yazar")
-=======
         or (kullanici_adi.strip().lower() in ["misafir yazar", "guest writer"])
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
     ),
     help=t["guest_writer_hint"],
 )
@@ -1120,10 +907,6 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-<<<<<<< HEAD
-=======
-
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
 # --- 3. ANA SAYFA ARAYÜZÜ ---
 st.title(t["main_title"])
 st.markdown(t["main_subtitle"])
@@ -1131,12 +914,8 @@ st.divider()
 
 
 @st.fragment(run_every=2)
-<<<<<<< HEAD
-def canli_zikir_havuzu(aktif_kullanici):
-=======
 def canli_zikir_havuzu(aktif_dil, aktif_kullanici):
     aktif_t = METINLER[aktif_dil]
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
     guncel_zikir, guncel_toplam, guncel_hedef = veri_cek()
 
     hedef_sayi = max(1, int(guncel_hedef or 1))
@@ -1147,17 +926,12 @@ def canli_zikir_havuzu(aktif_dil, aktif_kullanici):
     havuz_yuzdesi = min(100.0, (havuz_sayi / hedef_sayi) * 100)
 
     aktif_zikir_anlami = ZIKIR_ANLAMLARI.get(guncel_zikir, "")
-<<<<<<< HEAD
-
-    st.markdown(t["active_dhikr_heading"])
-=======
     if aktif_dil == "en" and aktif_zikir_anlami:
         aktif_zikir_anlami_goster = metni_ingilizceye_cevir(aktif_zikir_anlami)
     else:
         aktif_zikir_anlami_goster = aktif_zikir_anlami
 
     st.markdown(aktif_t["active_dhikr_heading"])
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
     st.markdown(
         f"""
         <div class="quote-box" style="background-color:#fff8e7; border:3px solid #111111; border-radius:12px; padding:18px 20px; text-align:center; margin-top:8px; margin-bottom:16px; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
@@ -1165,11 +939,7 @@ def canli_zikir_havuzu(aktif_dil, aktif_kullanici):
                 {guncel_zikir}
             </div>
             <div style="color:#444444; font-size:15px; font-weight:500; margin-top:10px; padding-top:10px; border-top:1px dashed #d4b46a; line-height:1.5;">
-<<<<<<< HEAD
-                <strong>{t["active_dhikr_meaning_label"]}</strong> {aktif_zikir_anlami}
-=======
                 <strong>{aktif_t["active_dhikr_meaning_label"]}</strong> {aktif_zikir_anlami_goster}
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
             </div>
         </div>
         """,
@@ -1179,15 +949,6 @@ def canli_zikir_havuzu(aktif_dil, aktif_kullanici):
     m1, m2 = st.columns(2)
     with m1:
         st.metric(
-<<<<<<< HEAD
-            label=f"🎯 {t['target_count_label']}",
-            value=f"{hedef_sayi:,} {t['unit_count']}".replace(",", "."),
-        )
-    with m2:
-        st.metric(
-            label=f"🌐 {t['shared_pool_reached_label']}",
-            value=f"{havuz_sayi:,} {t['unit_count']}".replace(",", "."),
-=======
             label=f"🎯 {aktif_t['target_count_label']}",
             value=f"{hedef_sayi:,} {aktif_t['unit_count']}".replace(",", "."),
         )
@@ -1195,22 +956,12 @@ def canli_zikir_havuzu(aktif_dil, aktif_kullanici):
         st.metric(
             label=f"🌐 {aktif_t['shared_pool_reached_label']}",
             value=f"{havuz_sayi:,} {aktif_t['unit_count']}".replace(",", "."),
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
             delta=f"%{havuz_yuzdesi:.1f}",
         )
 
     m3, m4 = st.columns(2)
     with m3:
         st.metric(
-<<<<<<< HEAD
-            label=f"👤 {t['your_contribution']} ({aktif_kullanici})",
-            value=f"{kisisel_sayi:,} {t['unit_count']}".replace(",", "."),
-        )
-    with m4:
-        st.metric(
-            label=f"📈 {t['your_goal_impact_label']}",
-            value=f"{kullanici_toplam_etki:,} {t['unit_count']}".replace(",", "."),
-=======
             label=f"👤 {aktif_t['your_contribution']} ({aktif_kullanici})",
             value=f"{kisisel_sayi:,} {aktif_t['unit_count']}".replace(",", "."),
         )
@@ -1218,17 +969,12 @@ def canli_zikir_havuzu(aktif_dil, aktif_kullanici):
         st.metric(
             label=f"📈 {aktif_t['your_goal_impact_label']}",
             value=f"{kullanici_toplam_etki:,} {aktif_t['unit_count']}".replace(",", "."),
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
             delta=f"+%{etki_yuzdesi:.2f}",
         )
 
     st.progress(min(1.0, havuz_sayi / hedef_sayi))
     st.caption(
-<<<<<<< HEAD
-        t["goal_progress_caption"]
-=======
         aktif_t["goal_progress_caption"]
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
         .format(
             pct=f"{havuz_yuzdesi:.1f}",
             current=havuz_sayi,
@@ -1241,13 +987,9 @@ def canli_zikir_havuzu(aktif_dil, aktif_kullanici):
     # --- 4. ZİKİR ÇEKME BUTONU ---
     col_btn1, col_btn2 = st.columns([2, 1])
     with col_btn1:
-<<<<<<< HEAD
-        if st.button(t["pull_btn"], use_container_width=True, type="primary"):
-=======
         if st.button(
             aktif_t["pull_btn"], use_container_width=True, type="primary"
         ):
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
             st.session_state.kullanici_sayac += 1
             yeni_toplam = havuz_sayi + 1
 
@@ -1258,15 +1000,9 @@ def canli_zikir_havuzu(aktif_dil, aktif_kullanici):
             st.rerun(scope="fragment")
 
     with col_btn2:
-<<<<<<< HEAD
-        if st.button(t["reset_personal_btn"], use_container_width=True):
-            st.session_state.kullanici_sayac = 0
-            st.toast(t["personal_reset_toast"])
-=======
         if st.button(aktif_t["reset_personal_btn"], use_container_width=True):
             st.session_state.kullanici_sayac = 0
             st.toast(aktif_t["personal_reset_toast"])
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
             st.rerun(scope="fragment")
 
     if st.session_state.baloncuk_goster:
@@ -1274,20 +1010,12 @@ def canli_zikir_havuzu(aktif_dil, aktif_kullanici):
         st.session_state.baloncuk_goster = False
 
     if havuz_sayi >= hedef_sayi:
-<<<<<<< HEAD
-        st.success(t["goal_reached_msg"].format(hedef=hedef_sayi).replace(",", "."))
-=======
         st.success(aktif_t["goal_reached_msg"].format(hedef=hedef_sayi).replace(",", "."))
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
         st.markdown(
             f"""
             <div style="background-color:#e8f4f8; padding:14px 16px; border-radius:8px; border-left: 6px solid #1f77b4; margin-top:15px; margin-bottom:15px;">
                 <marquee behavior="scroll" direction="left" scrollamount="5" onmouseover="this.stop();" onmouseout="this.start();" style="font-weight: 800; font-size: 20px; color: #1a252f; letter-spacing: 0.4px;">
-<<<<<<< HEAD
-                    {t["goal_marquee"]}
-=======
                     {aktif_t["goal_marquee"]}
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
                 </marquee>
             </div>
             """,
@@ -1295,11 +1023,7 @@ def canli_zikir_havuzu(aktif_dil, aktif_kullanici):
         )
 
 
-<<<<<<< HEAD
-canli_zikir_havuzu(kullanici_adi)
-=======
 canli_zikir_havuzu(dil, kullanici_adi)
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
 
 st.divider()
 
@@ -1311,10 +1035,6 @@ yazar_baslik, yazar_icerik, yazar_guncellenme = yazar_notu_cek()
 yazar_gecmisi = yazar_gecmisi_cek()
 
 if yazar_icerik:
-<<<<<<< HEAD
-    gosterilecek_baslik = yazar_baslik or t["writer_default_title"]
-    gosterilecek_icerik = yazar_icerik
-=======
     ham_baslik = yazar_baslik or t["writer_default_title"]
     if dil == "en":
         gosterilecek_baslik = metni_ingilizceye_cevir(ham_baslik)
@@ -1325,7 +1045,6 @@ if yazar_icerik:
         gosterilecek_icerik = yazar_icerik
         ceviri_notu = ""
 
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
     icerik_html = (
         gosterilecek_icerik.replace("&", "&amp;")
         .replace("<", "&lt;")
@@ -1342,11 +1061,7 @@ if yazar_icerik:
                 {icerik_html}
             </div>
             <div style="font-size:12px; color:#64748b; margin-top:10px;">
-<<<<<<< HEAD
-                {t["writer_updated_at"]}: {yazar_guncellenme} • {t["writer_char_count"]}: {len(gosterilecek_icerik)}
-=======
                 {t["writer_updated_at"]}: {yazar_guncellenme} • {t["writer_char_count"]}: {len(gosterilecek_icerik)}{ceviri_notu}
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
             </div>
         </div>
         """,
@@ -1421,10 +1136,6 @@ if misafir_yazar_aktif:
                 st.rerun()
 
             for kayit_id, g_baslik, g_icerik, g_tarih in yazar_gecmisi:
-<<<<<<< HEAD
-                g_baslik_goster = g_baslik or t["writer_default_title"]
-                g_icerik_goster = g_icerik
-=======
                 g_baslik_goster = (
                     metni_ingilizceye_cevir(g_baslik)
                     if (dil == "en" and g_baslik)
@@ -1433,7 +1144,6 @@ if misafir_yazar_aktif:
                 g_icerik_goster = (
                     metni_ingilizceye_cevir(g_icerik) if dil == "en" else g_icerik
                 )
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
                 baslik_etiketi = f"{g_tarih} — {g_baslik_goster}"
                 with st.expander(baslik_etiketi):
                     st.write(g_icerik_goster)
@@ -1450,12 +1160,8 @@ else:
 
 st.divider()
 
-<<<<<<< HEAD
 # --- 5. SORUMLULUK REDDİ, YASAL KORUMA VE ALT BİLGİ ---
 with st.expander(SORUMLULUK_REDDI_BASLIK, expanded=False):
     st.caption(SORUMLULUK_REDDI_METNI)
 
-=======
-# --- 5. YASAL KORUMA VE ALT BİLGİ ---
->>>>>>> 27f45821dde582ababa9fd88fce8176368209b45
 st.markdown(t["footer_html"], unsafe_allow_html=True)
